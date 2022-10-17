@@ -1,0 +1,101 @@
+// Copyright 2021-2022 Ceausu Matei Calin - 311CA
+
+Image_editor:
+
+	I defined two structures margins and pixel. In the pixel structure there
+are three in variables r, b and g. (RGB)
+	r holds the value for red, b for blue and g for green.
+	The margins structure has 7 variables. n and m remember the values for the
+image dimension. x1, y1, x2 and y2 remember the coordinates of the corners
+of the selected area. maxvalue holds the value of the maximum possible value
+of a pixel.
+	The execution of the program continues until the user inputs the EXIT
+command. 
+	Inside main function I read the operation as a string and than I compare
+it with all possible commands. If the command for the user is recognized, the
+value of the variable command_recognized becomes 1. If it remains 0 it means
+that the user introduced an unknown command.
+	The value of the variable image_loaded is 1 if there is an image already
+in the memory, 0 otherwise.
+	For each command, if there is no image loaded we print the corresponding
+message and after the succesful execution of each program we print a message
+specific for each command.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+1. For the LOAD command:
+
+	We read the filename and image_loaded becomes 1. If the files doesn't exist
+we print the corresponding message. If the file exists, we read the type and 
+the dimensions of the image. If the type is P1, P2 or P3 we have to read from
+the files as text. If is P4, P5 or P6 we have to read from the files as binary.
+In case the type is P2, P3, P5 or P6 we also read the possible maximum value of
+a pixel.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+2. For the SELECT command:
+
+	First, we check if the coordinate are valid, If they aren't we print the
+corresponding message. Also we have to check if there are 4 coordinates in the
+command and if they are numbers. After that we just modify the values in
+img_mrg for x1, y1, x2 and y2.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+3. For the ROTATE command:
+
+	Firstly, we have to check that the value of the angle is correct. After
+that we have to check if the entire image is selected. If the entire image is
+selected the the result will have the number of lines and columns switched. So
+I made a new matrix of pixels. After we transfer all the necessary data, we
+free the memory allocated for the old matrix. Also, all the possible values are
+multiples of 90 so we need a single function. I chose to rotate it
+counterclockwise.
+	If only a part of the matrix is selected, it needs to be a square. This
+means that the difference between x2 and x1 is equal to y2 and y1. Again, all
+the possible values of the angle are multiples of 90, so we need a single
+function.
+	
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4. For the CROP command:
+
+	For this command, the selected area becomes the new image. So we allocate
+a new matrix with x2 - x1 lines and y2 - y1 columns and just copy the values
+from the selected are to the new matrix and free the allocated memory for the
+old one.
+	Also, we modify the dimensions and the selected area in img_mrg.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+5. For the APPLY command:
+	
+	At the beginning, we have to make sure that the effect is a valid one and
+that the image is type P3 or P6, only coloured images.
+	After that, for each effect we calculate the value of the new pixel inside
+the selected area based on the kernel and we have it in a new matrix. If the
+pixel is on the edge of the image of if it isn't in the selected area, it's
+value doesn't change.
+	At the end we free the memory allocated for the old image. 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+6. For the SAVE command:
+
+	First we have to determine if the image itself is going to be text or
+binary. Also if we want to print is as text then P1, P2, P3 remain the same,
+but P4 turns into P1, P5 into P2 and P6 into P3. After that, we print the type,
+the dimensions, the maximum value and the pixels as text.
+	If we want to print the image as binary the P4, P5 and P6 remain the same,
+but P1 turns into P4, P2 into P5 and P3 into P6. After that we print the type,
+the dimensions and the maximum value as text. Then we close the file and open
+it in order to append in binary. Only at this moment we can print the pixels.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+7. For the EXIT command:
+
+	If the user introduced the exit command, then the execution is over. The
+while loop in the main function stops and we free the memory used during the
+program.
